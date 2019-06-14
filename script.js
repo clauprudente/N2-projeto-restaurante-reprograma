@@ -1,6 +1,4 @@
 const container = document.querySelector('.col-8');
-
-
 fetch('http://localhost:3000/comidas')
     .then(response => {
         return response.json();
@@ -19,12 +17,37 @@ fetch('http://localhost:3000/comidas')
 
             const body = document.createElement('div');
             body.setAttribute('class', 'media-body');
-            body.innerHTML = `<strong>${adicionaComida.nome}</strong>
+            body.innerHTML = `
+            <strong>${adicionaComida.nome}</strong>
             ${adicionaComida.descricao}`
+
+            const botaoDelete = document.createElement('button')
+            botaoDelete.textContent = 'Remover'
+            botaoDelete.setAttribute('class', 'btn btn-info')
+            botaoDelete.setAttribute('data-id', adicionaComida._id)
+
+            body.appendChild(botaoDelete)
 
             box.appendChild(imagem);
             box.appendChild(body)
             container.appendChild(box);
+
+            botaoDelete.addEventListener('click', () => {
+                fetch(`http://localhost:3000/comidas/${adicionaComida._id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                })
+                    .then(() => {
+                        box.remove();
+                    })
+                    .catch(erro => {
+                        console.log(erro)
+                    })
+            })
+
         });
     })
     .catch(erro => {
@@ -32,8 +55,8 @@ fetch('http://localhost:3000/comidas')
     })
 
 
-const botao = document.querySelector('#criar_comida_button')
-botao.addEventListener("click", criarComida)
+const botaoAdd = document.querySelector('#criar_comida_button')
+botaoAdd.addEventListener("click", criarComida)
 
 function criarComida() {
     console.log('Clicou no forms :)')
